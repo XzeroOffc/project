@@ -1,0 +1,206 @@
+</main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3><i class="fas fa-terminal"></i> ZarOffc</h3>
+          <p>Platform hosting premium generasi berikutnya. Stabilitas tanpa kompromi.</p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <a href="/"><i class="fas fa-chevron-right"></i> Beranda</a>
+          <a href="/plans"><i class="fas fa-chevron-right"></i> Deploy Server</a>
+        </div>
+        <div class="footer-section">
+          <h3>Contact</h3>
+          <a href="https://wa.me/6281234567890" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+          <a href="https://t.me/zanspanel" target="_blank"><i class="fab fa-telegram"></i> Telegram</a>
+          <a href="mailto:support@zanspanel.com"><i class="fas fa-envelope"></i> Email</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 ZarOffc. Powered by Future Tech.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Particles.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/particlesjs/2.2.3/particles.min.js"></script>
+  
+  <!-- Terminal Effects JavaScript -->
+  <script src="/js/terminal-effects.js"></script>
+
+  <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon="{&quot;rayId&quot;:&quot;9b347608d937ce85&quot;,&quot;version&quot;:&quot;2025.9.1&quot;,&quot;r&quot;:1,&quot;token&quot;:&quot;abe3b83d99574c7a9ee3570b7b91b6ce&quot;,&quot;serverTiming&quot;:{&quot;name&quot;:{&quot;cfExtPri&quot;:true,&quot;cfEdge&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfL4&quot;:true,&quot;cfSpeedBrain&quot;:true,&quot;cfCacheStatus&quot;:true}}}" crossorigin="anonymous"></script>
+  
+  <!-- Initialize Particles -->
+  <script>
+    particlesJS('particles-js', {
+      particles: {
+        number: {
+          value: 80,
+          density: {
+            enable: true,
+            value_area: 800
+          }
+        },
+        color: {
+          value: '#3b82f6'
+        },
+        shape: {
+          type: 'circle',
+          stroke: {
+            width: 0,
+            color: '#000000'
+          }
+        },
+        opacity: {
+          value: 0.3,
+          random: true,
+          anim: {
+            enable: true,
+            speed: 1,
+            opacity_min: 0.1,
+            sync: false
+          }
+        },
+        size: {
+          value: 3,
+          random: true,
+          anim: {
+            enable: true,
+            speed: 2,
+            size_min: 0.1,
+            sync: false
+          }
+        },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: '#3b82f6',
+          opacity: 0.2,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 1,
+          direction: 'none',
+          random: false,
+          straight: false,
+          out_mode: 'out',
+          bounce: false,
+          attract: {
+            enable: false,
+            rotateX: 600,
+            rotateY: 1200
+          }
+        }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: {
+          onhover: {
+            enable: true,
+            mode: 'grab'
+          },
+          onclick: {
+            enable: true,
+            mode: 'push'
+          },
+          resize: true
+        },
+        modes: {
+          grab: {
+            distance: 140,
+            line_linked: {
+              opacity: 0.5
+            }
+          },
+          push: {
+            particles_nb: 4
+          }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
+  <script>
+  // Theme Switcher Script
+document.addEventListener('DOMContentLoaded', function() {
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = themeToggle.querySelector('i');
+  const themeLabel = themeToggle.querySelector('.theme-label');
+  
+  // Check for saved theme preference
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  setTheme(savedTheme);
+  
+  themeToggle.addEventListener('click', function() {
+    const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+  });
+  
+  function setTheme(theme) {
+    if (theme === 'light') {
+      document.body.classList.add('light-theme');
+      themeIcon.className = 'fas fa-sun';
+      themeLabel.textContent = 'Light';
+      themeToggle.setAttribute('aria-label', 'Switch to dark theme');
+      
+      // Update navbar background secara eksplisit
+      const navbar = document.querySelector('.navbar');
+      if (navbar) {
+        navbar.style.background = 'rgba(248, 250, 252, 0.95)';
+      }
+      
+      // Update particles untuk light theme
+      updateParticlesTheme('light');
+    } else {
+      document.body.classList.remove('light-theme');
+      themeIcon.className = 'fas fa-moon';
+      themeLabel.textContent = 'Dark';
+      themeToggle.setAttribute('aria-label', 'Switch to light theme');
+      
+      // Reset navbar ke default
+      const navbar = document.querySelector('.navbar');
+      if (navbar) {
+        navbar.style.background = '';
+      }
+      
+      // Update particles untuk dark theme
+      updateParticlesTheme('dark');
+    }
+  }
+  
+  // Fungsi untuk update particles berdasarkan tema
+  function updateParticlesTheme(theme) {
+    if (typeof particlesJS !== 'undefined' && window.pJSDom && window.pJSDom.length > 0) {
+      const pJS = window.pJSDom[0].pJS;
+      
+      if (theme === 'light') {
+        pJS.particles.color.value = "#3b82f6";
+        pJS.particles.line_linked.color = "#3b82f6";
+      } else {
+        pJS.particles.color.value = "#06b6d4";
+        pJS.particles.line_linked.color = "#06b6d4";
+      }
+      
+      pJS.fn.particlesRefresh();
+    }
+  }
+  
+  // Listen for system theme changes
+  const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+  
+  prefersDarkScheme.addEventListener('change', e => {
+    if (!localStorage.getItem('theme')) {
+      setTheme(e.matches ? 'dark' : 'light');
+    }
+  });
+});
+</script>
+</body>
+</html>

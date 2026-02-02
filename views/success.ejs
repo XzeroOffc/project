@@ -1,0 +1,244 @@
+<%- include('partials/header') %>
+
+<section class="success-page-terminal">
+  <div class="container">
+    <div class="success-animation-terminal">
+      <div class="success-checkmark-large">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h1 class="success-title-terminal">
+        Payment <span class="gradient-text">Successful!</span>
+      </h1>
+      <p class="success-subtitle-terminal">
+        Panel Anda telah berhasil dibuat dan siap digunakan
+      </p>
+    </div>
+
+    <div class="success-content-terminal">
+      <!-- Panel Info -->
+      <div class="panel-info-terminal">
+        <div class="terminal-card">
+          <div class="terminal-card-header">
+            <div class="terminal-buttons">
+              <span class="terminal-btn close"></span>
+              <span class="terminal-btn minimize"></span>
+              <span class="terminal-btn maximize"></span>
+            </div>
+            <div class="terminal-title">panel-credentials.txt</div>
+          </div>
+          
+          <div class="terminal-card-body">
+            <div class="credentials-grid">
+              <div class="credential-item">
+                <div class="credential-icon">
+                  <i class="fas fa-id-card"></i>
+                </div>
+                <div class="credential-content">
+                  <span class="credential-label">Server ID</span>
+                  <span class="credential-value" id="serverId">-</span>
+                </div>
+              </div>
+
+              <div class="credential-item">
+                <div class="credential-icon">
+                  <i class="fas fa-user"></i>
+                </div>
+                <div class="credential-content">
+                  <span class="credential-label">Username</span>
+                  <span class="credential-value" id="username">-</span>
+                </div>
+              </div>
+
+              <div class="credential-item">
+                <div class="credential-icon">
+                  <i class="fas fa-key"></i>
+                </div>
+                <div class="credential-content">
+                  <span class="credential-label">Password</span>
+                  <span class="credential-value password-field">
+                    <span class="password-text" id="passwordText">••••••••</span>
+                    <button class="btn-toggle-password" onclick="togglePassword()">
+                      <i class="fas fa-eye" id="eyeIcon"></i>
+                    </button>
+                  </span>
+                </div>
+              </div>
+
+              <div class="credential-item">
+                <div class="credential-icon">
+                  <i class="fas fa-envelope"></i>
+                </div>
+                <div class="credential-content">
+                  <span class="credential-label">Email</span>
+                  <span class="credential-value" id="email">-</span>
+                </div>
+              </div>
+
+              <div class="credential-item full-width">
+                <div class="credential-icon">
+                  <i class="fas fa-globe"></i>
+                </div>
+                <div class="credential-content">
+                  <span class="credential-label">Panel URL</span>
+                  <a href="#" id="panelUrl" class="credential-value link-value" target="_blank">-</a>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn btn-secondary btn-block" onclick="copyAllCredentials()">
+              <i class="fas fa-copy"></i>
+              <span>Copy All Credentials</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="next-steps-terminal">
+        <h3 class="section-title-small">
+          <i class="fas fa-list-check"></i> Next Steps
+        </h3>
+        
+        <div class="steps-grid-terminal">
+          <div class="step-card-terminal">
+            <div class="step-number-terminal">1</div>
+            <div class="step-content-terminal">
+              <h4>Login ke Panel</h4>
+              <p>Klik panel URL dan login menggunakan username & password Anda</p>
+            </div>
+          </div>
+
+          <div class="step-card-terminal">
+            <div class="step-number-terminal">2</div>
+            <div class="step-content-terminal">
+              <h4>Upload Files</h4>
+              <p>Upload file bot atau aplikasi Anda melalui SFTP atau panel file manager</p>
+            </div>
+          </div>
+
+          <div class="step-card-terminal">
+            <div class="step-number-terminal">3</div>
+            <div class="step-content-terminal">
+              <h4>Start Server</h4>
+              <p>Jalankan server dan aplikasi Anda akan online 24/7</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Warning Box -->
+      <div class="warning-box-terminal">
+        <i class="fas fa-triangle-exclamation"></i>
+        <div>
+          <strong>Penting!</strong>
+          <p>Simpan data akses ini dengan baik. Kami juga telah mengirimkan informasi lengkap ke email Anda.</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons-terminal">
+        <a href="#" id="loginButton" class="btn btn-primary btn-lg" target="_blank">
+          <i class="fas fa-sign-in-alt"></i>
+          <span>Login to Panel</span>
+        </a>
+        <a href="/plans" class="btn btn-secondary btn-lg">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Order Again</span>
+        </a>
+      </div>
+
+      <!-- Support Box -->
+      <div class="support-box-terminal">
+        <div class="support-icon-large">
+          <i class="fas fa-headset"></i>
+        </div>
+        <div class="support-content">
+          <h4>Need Help?</h4>
+          <p>Tim support kami siap membantu Anda 24/7</p>
+          <div class="support-buttons">
+            <a href="https://wa.me/6281234567890" class="btn btn-secondary" target="_blank">
+              <i class="fab fa-whatsapp"></i>
+              <span>WhatsApp</span>
+            </a>
+            <a href="https://t.me/zanspanel" class="btn btn-secondary" target="_blank">
+              <i class="fab fa-telegram"></i>
+              <span>Telegram</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+let panelData = null;
+let passwordVisible = false;
+
+function loadPanelData() {
+  const data = sessionStorage.getItem('panelData');
+  if (!data) {
+    showToast('Data panel tidak ditemukan', 'error');
+    setTimeout(() => window.location.href = '/plans', 2000);
+    return;
+  }
+  
+  panelData = JSON.parse(data);
+  
+  document.getElementById('serverId').textContent = panelData.serverId;
+  document.getElementById('username').textContent = panelData.username;
+  document.getElementById('passwordText').dataset.password = panelData.password;
+  document.getElementById('email').textContent = panelData.email;
+  document.getElementById('panelUrl').textContent = panelData.domain;
+  document.getElementById('panelUrl').href = panelData.domain;
+  document.getElementById('loginButton').href = panelData.domain;
+}
+
+function togglePassword() {
+  const passwordText = document.getElementById('passwordText');
+  const eyeIcon = document.getElementById('eyeIcon');
+  const password = passwordText.dataset.password;
+  
+  passwordVisible = !passwordVisible;
+  
+  if (passwordVisible) {
+    passwordText.textContent = password;
+    eyeIcon.className = 'fas fa-eye-slash';
+  } else {
+    passwordText.textContent = '••••••••';
+    eyeIcon.className = 'fas fa-eye';
+  }
+}
+
+async function copyAllCredentials() {
+  const text = `
+╔════════════════════════════════════════╗
+║   PANEL PTERODACTYL - ACCESS INFO     ║
+╚════════════════════════════════════════╝
+
+Server ID    : ${panelData.serverId}
+Username     : ${panelData.username}
+Password     : ${panelData.password}
+Email        : ${panelData.email}
+Panel URL    : ${panelData.domain}
+
+⚠️  Simpan informasi ini dengan baik!
+📧 Data juga telah dikirim ke email Anda
+🔒 Jangan bagikan password ke orang lain
+
+═══════════════════════════════════════
+Powered by Zans Panel - Next Gen Hosting
+  `.trim();
+  
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('Semua data berhasil disalin!', 'success');
+  } catch (err) {
+    showToast('Gagal menyalin data', 'error');
+  }
+}
+
+loadPanelData();
+</script>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,218 @@
+<%- include('partials/header') %>
+
+<style>
+.warranty-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  color: white;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.warranty-form {
+  background: rgba(255,255,255,0.1);
+  padding: 2rem;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.1);
+  border-radius: 5px;
+  color: white;
+  font-size: 1rem;
+}
+
+.form-control::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+.btn-warranty {
+  background: #4CAF50;
+  color: white;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-warranty:hover {
+  background: #45a049;
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+.alert-success {
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid #4CAF50;
+}
+
+.alert-error {
+  background: rgba(244, 67, 54, 0.2);
+  border: 1px solid #f44336;
+}
+
+.token-info {
+  background: rgba(255,255,255,0.1);
+  padding: 1rem;
+  border-radius: 5px;
+  margin-top: 1rem;
+}
+
+.token-info code {
+  background: rgba(0,0,0,0.2);
+  padding: 0.25rem 0.5rem;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.warranty-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.step {
+  text-align: center;
+  flex: 1;
+  position: relative;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  right: -50%;
+  width: 100%;
+  height: 2px;
+  background: rgba(255,255,255,0.3);
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.5rem;
+  font-weight: bold;
+}
+
+.step.active .step-number {
+  background: #4CAF50;
+}
+</style>
+
+<div class="container">
+  <div class="warranty-container">
+    <h1 style="text-align: center; margin-bottom: 2rem;">🛡️ Klaim Garansi Server</h1>
+    
+    <div class="warranty-steps">
+      <div class="step active">
+        <div class="step-number">1</div>
+        <div>Isi Data</div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div>Validasi</div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div>Selesai</div>
+      </div>
+    </div>
+    
+    <% if (success) { %>
+      <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i> <%= message %>
+      </div>
+      
+      <div class="token-info">
+        <p><strong>Status:</strong> Klaim diterima</p>
+        <p><strong>Proses:</strong> Server akan di-reset dalam 24 jam</p>
+        <p><strong>Notifikasi:</strong> Anda akan mendapat notifikasi via Telegram</p>
+      </div>
+      
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="/" class="btn btn-primary">Kembali ke Home</a>
+      </div>
+    <% } else { %>
+      <% if (error) { %>
+        <div class="alert alert-error">
+          <i class="fas fa-exclamation-triangle"></i> <%= error %>
+        </div>
+      <% } %>
+      
+      <form class="warranty-form" method="POST" action="/warranty/claim">
+        <div class="form-group">
+          <label class="form-label" for="serverId">
+            <i class="fas fa-server"></i> Server ID
+          </label>
+          <input type="text" 
+                 class="form-control" 
+                 id="serverId" 
+                 name="serverId" 
+                 placeholder="Masukkan ID server Anda"
+                 required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="token">
+            <i class="fas fa-key"></i> Token Garansi
+          </label>
+          <input type="text" 
+                 class="form-control" 
+                 id="token" 
+                 name="token" 
+                 placeholder="Masukkan token garansi 32 karakter"
+                 pattern="[a-f0-9]{32}"
+                 title="Token harus 32 karakter hex"
+                 required>
+          <small style="opacity: 0.7;">Token berupa 32 karakter hex (contoh: a1b2c3d4e5f6...)</small>
+        </div>
+        
+        <div style="text-align: center;">
+          <button type="submit" class="btn-warranty">
+            <i class="fas fa-paper-plane"></i> Klaim Garansi
+          </button>
+        </div>
+      </form>
+      
+      <div class="token-info">
+        <h4><i class="fas fa-info-circle"></i> Informasi Token</h4>
+        <p>Token garansi Anda bisa ditemukan di:</p>
+        <ul>
+          <li>Email konfirmasi pembelian</li>
+          <li>Notifikasi Telegram saat pembelian</li>
+          <li>Dashboard panel Pterodactyl (di deskripsi server)</li>
+        </ul>
+        <p><strong>Masa berlaku:</strong> <%= CONFIG.warranty.expiryDays %> hari sejak pembelian</p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

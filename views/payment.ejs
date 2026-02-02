@@ -1,0 +1,243 @@
+<%- include('partials/header') %>
+
+<section class="payment-page-terminal">
+  <div class="container">
+    <div class="payment-status-card pending">
+      <div class="status-icon-large">
+        <i class="fas fa-clock"></i>
+      </div>
+      <h2 class="status-title">Menunggu Pembayaran</h2>
+      <p class="status-subtitle">Scan QR Code di bawah untuk menyelesaikan pembayaran</p>
+    </div>
+
+    <div class="payment-content-terminal">
+      <!-- Left - QR Code -->
+      <div class="qr-section-terminal">
+        <div class="terminal-card">
+          <div class="terminal-card-header">
+            <div class="terminal-buttons">
+              <span class="terminal-btn close"></span>
+              <span class="terminal-btn minimize"></span>
+              <span class="terminal-btn maximize"></span>
+            </div>
+            <div class="terminal-title">qr-payment.png</div>
+          </div>
+          
+          <div class="terminal-card-body">
+            <div class="qr-display">
+              <div class="qr-loader" id="qrLoader">
+                <div class="loading-spinner"></div>
+                <p>Generating QR Code...</p>
+              </div>
+              <img id="qrImage" class="qr-image" src="" alt="QRIS" style="display: none;">
+            </div>
+            
+            <div class="scan-instructions">
+              <h4><i class="fas fa-mobile-screen"></i> Cara Pembayaran</h4>
+              <ol>
+                <li>Buka aplikasi <strong>e-wallet</strong> atau <strong>m-banking</strong></li>
+                <li>Pilih menu <strong>"Scan QR"</strong> atau <strong>"QRIS"</strong></li>
+                <li>Scan QR Code di atas</li>
+                <li>Konfirmasi pembayaran</li>
+                <li>Panel akan otomatis aktif setelah pembayaran</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right - Details -->
+      <div class="payment-details-terminal">
+        <div class="terminal-card">
+          <div class="terminal-card-header">
+            <div class="terminal-buttons">
+              <span class="terminal-btn close"></span>
+              <span class="terminal-btn minimize"></span>
+              <span class="terminal-btn maximize"></span>
+            </div>
+            <div class="terminal-title">payment-details.txt</div>
+          </div>
+          
+          <div class="terminal-card-body">
+            <div class="detail-row">
+              <span class="detail-label">Order ID</span>
+              <span class="detail-value" id="orderId">-</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="detail-label">Plan</span>
+              <span class="detail-value" id="planName">-</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="detail-label">Username</span>
+              <span class="detail-value" id="username">-</span>
+            </div>
+            
+            <div class="detail-row">
+              <span class="detail-label">Email</span>
+              <span class="detail-value" id="email">-</span>
+            </div>
+            
+            <div class="detail-row total-row">
+              <span class="detail-label">Total Payment</span>
+              <span class="detail-value amount-value" id="amount">Rp 0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timer-card-terminal">
+          <i class="fas fa-hourglass-half"></i>
+          <div>
+            <h4>Time Limit</h4>
+            <p class="timer-display" id="timer">05:00</p>
+            <small>Selesaikan pembayaran sebelum waktu habis</small>
+          </div>
+        </div>
+
+        <div class="help-card-terminal">
+          <i class="fas fa-headset"></i>
+          <div>
+            <h4>Butuh Bantuan?</h4>
+            <p>Hubungi support kami</p>
+            <a href="https://wa.me/6281234567890" class="btn btn-secondary btn-sm" target="_blank">
+              <i class="fab fa-whatsapp"></i>
+              <span>WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+let paymentData = null;
+let checkInterval = null;
+let timerInterval = null;
+let timeLeft = 300;
+
+function loadPaymentData() {
+  const data = sessionStorage.getItem('paymentData');
+  if (!data) {
+    showToast('Data pembayaran tidak ditemukan', 'error');
+    setTimeout(() => window.location.href = '/plans', 2000);
+    return;
+  }
+  
+  paymentData = JSON.parse(data);
+  
+  document.getElementById('orderId').textContent = paymentData.orderId;
+  document.getElementById('planName').textContent = paymentData.plan.toUpperCase();
+  document.getElementById('username').textContent = paymentData.username;
+  document.getElementById('email').textContent = paymentData.email;
+  document.getElementById('amount').textContent = `Rp ${paymentData.amount.toLocaleString('id-ID')}`;
+  
+  const qrImage = document.getElementById('qrImage');
+  qrImage.src = paymentData.qrisUrl;
+  qrImage.onload = () => {
+    document.getElementById('qrLoader').style.display = 'none';
+    qrImage.style.display = 'block';
+  };
+  qrImage.onerror = () => {
+    document.getElementById('qrLoader').innerHTML = '<p style="color: var(--error);">Gagal memuat QR Code</p>';
+  };
+  
+  checkPaymentStatus();
+  startTimer();
+}
+
+function checkPaymentStatus() {
+  let attempts = 0;
+  
+  checkInterval = setInterval(async () => {
+    if (attempts >= 100) {
+      clearInterval(checkInterval);
+      showExpired();
+      return;
+    }
+    
+    try {
+      const response = await fetch('/api/payment/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: paymentData.orderId,
+          amount: paymentData.amount,
+          plan: paymentData.plan,
+          username: paymentData.username,
+          email: paymentData.email
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        clearInterval(checkInterval);
+        clearInterval(timerInterval);
+        showSuccess(data.panel);
+      } else if (data.status === 'failed') {
+        clearInterval(checkInterval);
+        clearInterval(timerInterval);
+        showFailed();
+      }
+      
+      attempts++;
+    } catch (err) {
+      console.error('Check error:', err);
+    }
+  }, 3000);
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById('timer').textContent = 
+      `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      clearInterval(checkInterval);
+      showExpired();
+    }
+  }, 1000);
+}
+
+function showSuccess(panel) {
+  sessionStorage.setItem('panelData', JSON.stringify(panel));
+  window.location.href = '/success';
+}
+
+function showFailed() {
+  const statusCard = document.querySelector('.payment-status-card');
+  statusCard.className = 'payment-status-card failed';
+  statusCard.innerHTML = `
+    <div class="status-icon-large">
+      <i class="fas fa-times-circle"></i>
+    </div>
+    <h2 class="status-title">Pembayaran Gagal</h2>
+    <p class="status-subtitle">Pembayaran Anda gagal atau expired</p>
+    <a href="/plans" class="btn btn-primary">Kembali ke Plans</a>
+  `;
+}
+
+function showExpired() {
+  const statusCard = document.querySelector('.payment-status-card');
+  statusCard.className = 'payment-status-card failed';
+  statusCard.innerHTML = `
+    <div class="status-icon-large">
+      <i class="fas fa-clock"></i>
+    </div>
+    <h2 class="status-title">Waktu Habis</h2>
+    <p class="status-subtitle">Batas waktu pembayaran telah habis</p>
+    <a href="/plans" class="btn btn-primary">Coba Lagi</a>
+  `;
+}
+
+loadPaymentData();
+</script>
+
+<%- include('partials/footer') %>
