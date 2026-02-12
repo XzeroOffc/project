@@ -68,8 +68,8 @@ const CONFIG = {
   },
   
   cloudflare: {
-    secretkey: "0x4AAAAAA", // secretkey dari cloudflare
-    sitekey: "0x4AAAAAA" // sitekey dari cloudflare
+    secretkey: "0x4AAAAAACbExPX_ZQhg2Sr_bnvBlIuhA9A", // secretkey dari cloudflare
+    sitekey: "0x4AAAAAACbExGMifUbMGxuY" // sitekey dari cloudflare
   }, 
   
   pterodactyl: {
